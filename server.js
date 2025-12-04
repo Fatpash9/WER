@@ -144,22 +144,25 @@ app.use(express.json());
 
 // Serve static files FIRST (CSS, JS, images, etc.)
 // In Vercel, static files are handled by Vercel's routing, but we still need this for local dev
-app.use(express.static(__dirname, {
-    setHeaders: (res, path) => {
-        // Set proper MIME types
-        if (path.endsWith('.css')) {
-            res.setHeader('Content-Type', 'text/css');
-        } else if (path.endsWith('.js')) {
-            res.setHeader('Content-Type', 'application/javascript');
-        } else if (path.endsWith('.svg')) {
-            res.setHeader('Content-Type', 'image/svg+xml');
-        } else if (path.endsWith('.png')) {
-            res.setHeader('Content-Type', 'image/png');
-        }
-    },
-    // Don't serve index.html as static - let the route handle it
-    index: false
-}));
+// Only use static middleware if not in Vercel (Vercel handles static files automatically)
+if (process.env.VERCEL !== '1') {
+    app.use(express.static(__dirname, {
+        setHeaders: (res, path) => {
+            // Set proper MIME types
+            if (path.endsWith('.css')) {
+                res.setHeader('Content-Type', 'text/css');
+            } else if (path.endsWith('.js')) {
+                res.setHeader('Content-Type', 'application/javascript');
+            } else if (path.endsWith('.svg')) {
+                res.setHeader('Content-Type', 'image/svg+xml');
+            } else if (path.endsWith('.png')) {
+                res.setHeader('Content-Type', 'image/png');
+            }
+        },
+        // Don't serve index.html as static - let the route handle it
+        index: false
+    }));
+}
 
 // Get store info (Printiful doesn't have "shops", it uses store info)
 app.get('/api/shops', async (req, res) => {
@@ -521,24 +524,33 @@ app.get('*', (req, res, next) => {
     }
     
     // Skip if it looks like a file request (has extension)
-    // Express static middleware should have handled these, but double-check
+    // In Vercel, these should be handled by Vercel's routing, but double-check
     const path = require('path');
     const ext = path.extname(req.path);
     
     // List of static file extensions that should NOT be served as HTML
-    const staticExtensions = ['.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.eot', '.json', '.xml'];
+    const staticExtensions = ['.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.eot', '.json', '.xml', '.map'];
     
     if (ext && staticExtensions.includes(ext.toLowerCase())) {
-        // This should have been handled by static middleware or Vercel routing
-        // If we get here, the file doesn't exist
-        return res.status(404).send('File not found');
+        // This should have been handled by Vercel routing or static middleware
+        // If we get here, the file doesn't exist - return 404
+        return res.status(404).type('text/plain').send('File not found');
     }
     
     // Serve index.html for all other routes (SPA routing)
-    res.sendFile(path.join(__dirname, 'index.html'));
+    // Use absolute path for Vercel compatibility
+    const indexPath = path.join(__dirname, 'index.html');
+    res.sendFile(indexPath);
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+// Export for Vercel serverless function
+// Only listen on port if not in Vercel environment
+if (process.env.VERCEL !== '1') {
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+    });
+}
+
+// Export the app for Vercel
+module.exports = app;
 
