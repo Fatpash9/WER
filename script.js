@@ -68,15 +68,18 @@ document.addEventListener('DOMContentLoaded', function() {
 async function initApp() {
     try {
         console.log('Initializing app...');
+        console.log('API_BASE:', API_BASE);
         
         // Get shop ID first
         const shopsResponse = await fetch(`${API_BASE}/shops`);
         
         if (!shopsResponse.ok) {
+            console.error('API request failed:', shopsResponse.status, shopsResponse.statusText);
             throw new Error(`Server returned ${shopsResponse.status}: ${shopsResponse.statusText}`);
         }
         
         const shopsData = await shopsResponse.json();
+        console.log('Shops data received:', shopsData);
         
         console.log('Shops response:', shopsData);
         
@@ -217,10 +220,10 @@ function renderProducts() {
                 <div class="product-item" data-product-id="${productId}" data-product-index="${index}">
                     <div class="product-image">
                         ${productImage ? 
-                            `<img src="${productImage}" alt="${productName}" class="product-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` : 
+                            `<img src="${productImage}" alt="${productName}" class="product-img" crossorigin="anonymous" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" onload="this.nextElementSibling.style.display='none';">` : 
                             ''
                         }
-                        <div class="product-placeholder" style="${productImage ? 'display:none;' : ''}">${String(index + 1).padStart(2, '0')}</div>
+                        <div class="product-placeholder" style="${productImage ? 'display:none;' : 'display:flex;'}">${String(index + 1).padStart(2, '0')}</div>
                         <div class="product-overlay">
                             <button class="product-quick-view">QUICK VIEW</button>
                         </div>
