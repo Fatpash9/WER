@@ -44,17 +44,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Initialize app
+        // Initialize app with better error handling
         initApp().catch(error => {
             console.error('Failed to initialize app:', error);
+            console.error('API_BASE was:', API_BASE);
+            
             // Ensure page still renders even if API fails
             const productsGrid = document.getElementById('productsGrid');
             if (productsGrid) {
                 productsGrid.innerHTML = `
-                    <div class="loading-state" style="color: #ff4444;">
-                        Unable to load products. Please check your connection.<br>
-                        <span style="font-size: 12px; margin-top: 20px; display: block; color: #999;">
-                            Error: ${error.message || 'Unknown error'}
-                        </span>
+                    <div class="loading-state" style="color: var(--text-secondary); padding: 60px 20px;">
+                        <div style="margin-bottom: 20px;">Unable to load products</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.6;">
+                            The backend server may not be running.<br>
+                            Please ensure the server is deployed and accessible.<br>
+                            <span style="color: #999; font-size: 10px; margin-top: 10px; display: block;">
+                                API Endpoint: ${API_BASE}
+                            </span>
+                        </div>
                     </div>
                 `;
             }
