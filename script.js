@@ -1,3 +1,20 @@
+// Define initGoogle FIRST so it's available when Google Maps script loads
+// This must be defined before the Google Maps script tries to call it
+window.initGoogle = window.initGoogle || function initGoogle(force = false) {
+    // This will be fully defined later in the file
+    // For now, just provide a stub that will be replaced
+    console.log('[initGoogle] Function called but not yet fully initialized');
+    if (typeof window._initGoogleFull === 'function') {
+        return window._initGoogleFull(force);
+    }
+    // Retry after a short delay
+    setTimeout(() => {
+        if (typeof window._initGoogleFull === 'function') {
+            window._initGoogleFull(force);
+        }
+    }, 100);
+};
+
 // Configuration
 // Use relative path for API - works in both localhost and production
 const API_BASE = window.location.origin + '/api';
@@ -1566,9 +1583,9 @@ function updateStateDropdown(country) {
 // Initialize Google Places Autocomplete using new PlaceAutocompleteElement API
 // IMPORTANT: We do NOT create new google.maps.places.Autocomplete() - that's the OLD API
 // The <gmp-place-autocomplete> web component works automatically - we just set up event listeners
-// Make it globally available for the Google Maps script callback
-// Define it immediately at the top level so it's available when Google Maps script loads
-window.initGoogle = window.initGoogle || function initGoogle(force = false) {
+// Replace the stub with the full implementation
+// Store the full implementation
+window._initGoogleFull = function initGoogle(force = false) {
     console.log('[initGoogle] Starting initialization, force:', force);
     
     const addressElement = document.getElementById('address-input');
@@ -2510,6 +2527,9 @@ window.initGoogle = window.initGoogle || function initGoogle(force = false) {
         }
     }
 };
+
+// Replace the stub with the full implementation
+window.initGoogle = window._initGoogleFull;
 
 // Global callback for Google Maps API
 // initGoogle is called by the Google Maps script callback
