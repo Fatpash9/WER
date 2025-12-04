@@ -1567,9 +1567,8 @@ function updateStateDropdown(country) {
 // IMPORTANT: We do NOT create new google.maps.places.Autocomplete() - that's the OLD API
 // The <gmp-place-autocomplete> web component works automatically - we just set up event listeners
 // Make it globally available for the Google Maps script callback
-// Define it immediately so it's available when Google Maps script loads
-if (typeof window.initGoogle === 'undefined') {
-    window.initGoogle = function initGoogle(force = false) {
+// Define it immediately at the top level so it's available when Google Maps script loads
+window.initGoogle = window.initGoogle || function initGoogle(force = false) {
     console.log('[initGoogle] Starting initialization, force:', force);
     
     const addressElement = document.getElementById('address-input');
@@ -2511,7 +2510,6 @@ if (typeof window.initGoogle === 'undefined') {
         }
     }
 };
-}
 
 // Global callback for Google Maps API
 // initGoogle is called by the Google Maps script callback

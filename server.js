@@ -503,13 +503,26 @@ app.post('/api/contact', async (req, res) => {
     }
 });
 
-// Serve index.html for all non-API routes (SPA fallback)
+// Serve index.html for all non-API, non-file routes (SPA fallback)
 // This must be LAST, after all API routes and static file serving
-app.get('*', (req, res) => {
-    // Don't serve index.html for API routes or file requests
-    if (req.path.startsWith('/api/') || req.path.includes('.')) {
+// Only match routes that don't have file extensions
+app.get('*', (req, res, next) => {
+    // Skip if it's an API route
+    if (req.path.startsWith('/api/')) {
         return res.status(404).json({ error: 'Not found' });
     }
+    
+    // Skip if it looks like a file request (has extension)
+    // Express static middleware should have handled these, but double-check
+    const path = require('path');
+    const ext = path.extname(req.path);
+    if (ext && ext !== '.html') {
+        // This should have been handled by static middleware
+        // If we get here, the file doesn't exist
+        return res.status(404).send('File not found');
+    }
+    
+    // Serve index.html for all other routes (SPA routing)
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
