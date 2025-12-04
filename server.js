@@ -142,25 +142,23 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
 
 app.use(express.json());
 
-// Serve static files FIRST (CSS, JS, images, etc.)
+// Serve static files from public folder
 // In Vercel, static files are handled by Vercel's routing, but we still need this for local dev
 // Only use static middleware if not in Vercel (Vercel handles static files automatically)
 if (process.env.VERCEL !== '1') {
-    app.use(express.static(__dirname, {
-        setHeaders: (res, path) => {
+    app.use('/public', express.static(path.join(__dirname, 'public'), {
+        setHeaders: (res, filePath) => {
             // Set proper MIME types
-            if (path.endsWith('.css')) {
+            if (filePath.endsWith('.css')) {
                 res.setHeader('Content-Type', 'text/css');
-            } else if (path.endsWith('.js')) {
+            } else if (filePath.endsWith('.js')) {
                 res.setHeader('Content-Type', 'application/javascript');
-            } else if (path.endsWith('.svg')) {
+            } else if (filePath.endsWith('.svg')) {
                 res.setHeader('Content-Type', 'image/svg+xml');
-            } else if (path.endsWith('.png')) {
+            } else if (filePath.endsWith('.png')) {
                 res.setHeader('Content-Type', 'image/png');
             }
-        },
-        // Don't serve index.html as static - let the route handle it
-        index: false
+        }
     }));
 }
 
