@@ -30,18 +30,38 @@ if (STRIPE_PUBLISHABLE_KEY && STRIPE_PUBLISHABLE_KEY !== 'YOUR_STRIPE_PUBLISHABL
 
 // Navigation scroll effect
 document.addEventListener('DOMContentLoaded', function() {
-    const navbar = document.querySelector('.navbar');
-    
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
+    try {
+        const navbar = document.querySelector('.navbar');
+        
+        if (navbar) {
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
         }
-    });
-    
-    // Initialize app
-    initApp();
+        
+        // Initialize app
+        initApp().catch(error => {
+            console.error('Failed to initialize app:', error);
+            // Ensure page still renders even if API fails
+            const productsGrid = document.getElementById('productsGrid');
+            if (productsGrid) {
+                productsGrid.innerHTML = `
+                    <div class="loading-state" style="color: #ff4444;">
+                        Unable to load products. Please check your connection.<br>
+                        <span style="font-size: 12px; margin-top: 20px; display: block; color: #999;">
+                            Error: ${error.message || 'Unknown error'}
+                        </span>
+                    </div>
+                `;
+            }
+        });
+    } catch (error) {
+        console.error('Error in DOMContentLoaded:', error);
+    }
 });
 
 // Initialize application
@@ -51,6 +71,11 @@ async function initApp() {
         
         // Get shop ID first
         const shopsResponse = await fetch(`${API_BASE}/shops`);
+        
+        if (!shopsResponse.ok) {
+            throw new Error(`Server returned ${shopsResponse.status}: ${shopsResponse.statusText}`);
+        }
+        
         const shopsData = await shopsResponse.json();
         
         console.log('Shops response:', shopsData);
@@ -77,7 +102,12 @@ async function initApp() {
         }
     } catch (error) {
         console.error('Error initializing app:', error);
-        showError('Failed to load products. Make sure the server is running on http://localhost:3000');
+        const errorMsg = error.message || 'Unknown error';
+        if (errorMsg.includes('Failed to fetch') || errorMsg.includes('NetworkError')) {
+            showError('Failed to connect to server. Please check your connection and ensure the backend is running.');
+        } else {
+            showError(`Failed to load products: ${errorMsg}`);
+        }
         renderErrorState('CONNECTION ERROR');
     }
 }
