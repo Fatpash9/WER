@@ -141,7 +141,17 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
 });
 
 app.use(express.json());
-app.use(express.static(__dirname));
+// Serve static files FIRST (CSS, JS, images, etc.)
+app.use(express.static(__dirname, {
+    setHeaders: (res, path) => {
+        // Set proper MIME types
+        if (path.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css');
+        } else if (path.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        }
+    }
+}));
 
 // Get store info (Printiful doesn't have "shops", it uses store info)
 app.get('/api/shops', async (req, res) => {
@@ -326,11 +336,6 @@ app.post('/api/shops/:shopId/orders', async (req, res) => {
     }
 });
 
-// Serve index.html
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
 // Calculate shipping rates from Printful
 app.post('/api/calculate-shipping', async (req, res) => {
     try {
@@ -496,6 +501,16 @@ app.post('/api/contact', async (req, res) => {
         console.error('Error sending contact email:', error);
         res.status(500).json({ error: 'Failed to send email. Please try again later.' });
     }
+});
+
+// Serve index.html for all non-API routes (SPA fallback)
+// This must be LAST, after all API routes and static file serving
+app.get('*', (req, res) => {
+    // Don't serve index.html for API routes or file requests
+    if (req.path.startsWith('/api/') || req.path.includes('.')) {
+        return res.status(404).json({ error: 'Not found' });
+    }
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.listen(PORT, () => {
