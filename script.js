@@ -1,5 +1,6 @@
 // Configuration
-const API_BASE = 'http://localhost:3000/api';
+// Use relative path for API - works in both localhost and production
+const API_BASE = window.location.origin + '/api';
 // IMPORTANT: Replace with your Stripe PUBLISHABLE key (starts with pk_live_ or pk_test_)
 // Get it from: https://dashboard.stripe.com/apikeys
 // The secret key is configured on the server side
