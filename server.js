@@ -141,7 +141,9 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
 });
 
 app.use(express.json());
+
 // Serve static files FIRST (CSS, JS, images, etc.)
+// In Vercel, static files are handled by Vercel's routing, but we still need this for local dev
 app.use(express.static(__dirname, {
     setHeaders: (res, path) => {
         // Set proper MIME types
@@ -149,8 +151,14 @@ app.use(express.static(__dirname, {
             res.setHeader('Content-Type', 'text/css');
         } else if (path.endsWith('.js')) {
             res.setHeader('Content-Type', 'application/javascript');
+        } else if (path.endsWith('.svg')) {
+            res.setHeader('Content-Type', 'image/svg+xml');
+        } else if (path.endsWith('.png')) {
+            res.setHeader('Content-Type', 'image/png');
         }
-    }
+    },
+    // Don't serve index.html as static - let the route handle it
+    index: false
 }));
 
 // Get store info (Printiful doesn't have "shops", it uses store info)
@@ -516,8 +524,12 @@ app.get('*', (req, res, next) => {
     // Express static middleware should have handled these, but double-check
     const path = require('path');
     const ext = path.extname(req.path);
-    if (ext && ext !== '.html') {
-        // This should have been handled by static middleware
+    
+    // List of static file extensions that should NOT be served as HTML
+    const staticExtensions = ['.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.eot', '.json', '.xml'];
+    
+    if (ext && staticExtensions.includes(ext.toLowerCase())) {
+        // This should have been handled by static middleware or Vercel routing
         // If we get here, the file doesn't exist
         return res.status(404).send('File not found');
     }
