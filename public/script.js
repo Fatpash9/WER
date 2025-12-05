@@ -173,7 +173,7 @@ async function initApp() {
 async function loadProducts() {
     try {
         console.log('Loading products for shop:', shopId);
-        const response = await fetch(`${API_BASE}/shops/${shopId}/products`);
+        const response = await fetch(`${getApiBase()}/shops/${shopId}/products`);
         const data = await response.json();
         
         console.log('Products response:', data);
@@ -409,7 +409,7 @@ async function openModal(productId) {
         // Fetch full product details to get sync_variants array
         console.log('Fetching full product details for:', product.id);
         try {
-            const response = await fetch(`${API_BASE}/shops/${shopId}/products/${product.id}`);
+            const response = await fetch(`${getApiBase()}/shops/${shopId}/products/${product.id}`);
             const productData = await response.json();
             
             if (productData.result && productData.code === 200) {
@@ -920,7 +920,7 @@ async function calculateShipping(showEstimate = false) {
         
         console.log('[calculateShipping] Sending payload:', { recipient, items });
         
-        const response = await fetch(`${API_BASE}/calculate-shipping`, {
+        const response = await fetch(`${getApiBase()}/calculate-shipping`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -1424,7 +1424,7 @@ async function proceedToCheckout() {
             size: item.size
         }));
         
-        const response = await fetch(`${API_BASE}/create-checkout-session`, {
+        const response = await fetch(`${getApiBase()}/create-checkout-session`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
