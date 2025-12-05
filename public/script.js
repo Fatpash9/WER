@@ -1031,6 +1031,7 @@ async function updateCartDisplay() {
     const cartTotal = document.getElementById('cartTotal');
     const checkoutBtn = document.getElementById('checkoutBtn');
     const cartShipping = document.getElementById('cartShipping');
+    const proceedToShippingBtn = document.getElementById('proceedToShippingBtn');
     
     if (!cartItems) return;
     
@@ -1039,7 +1040,13 @@ async function updateCartDisplay() {
         if (cartTotal) {
             cartTotal.innerHTML = '<div>TOTAL</div><div>$0.00</div>';
         }
-        if (checkoutBtn) checkoutBtn.disabled = true;
+        if (checkoutBtn) {
+            checkoutBtn.disabled = true;
+            checkoutBtn.style.display = 'none';
+        }
+        if (proceedToShippingBtn) {
+            proceedToShippingBtn.style.display = 'none';
+        }
         if (cartShipping) cartShipping.style.display = 'none';
         shippingCost = 0;
         return;
@@ -1080,37 +1087,39 @@ async function updateCartDisplay() {
         cartTotal.innerHTML = `<div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">Subtotal: ${subtotalText}${shippingText}</div><div style="font-size: 24px; font-weight: 600;">$${(total / 100).toFixed(2)}</div>`;
     }
     
-    // Show proceed to shipping button if no address yet or shipping not calculated
-    const proceedToShippingBtn = document.getElementById('proceedToShippingBtn');
-    const cartShipping = document.getElementById('cartShipping'); // This is the container div
-    
-    // If shipping form is visible, hide cart items
-    if (cartShipping && cartShipping.style.display === 'block') {
-        if (cartItems) {
-            cartItems.style.display = 'none';
+    // Ensure shipping form is hidden initially (unless already shown)
+    if (!cartShipping || cartShipping.style.display !== 'block') {
+        if (cartShipping) {
+            cartShipping.style.display = 'none';
         }
-    } else {
         if (cartItems) {
             cartItems.style.display = 'block';
+        }
+    } else {
+        // If shipping form is visible, hide cart items
+        if (cartItems) {
+            cartItems.style.display = 'none';
         }
     }
     
     // Determine if shipping form is visible
     const cartShippingVisible = cartShipping && cartShipping.style.display === 'block';
     
+    // Button visibility logic: ONLY ONE button visible at a time
     if (proceedToShippingBtn) {
-        // Show "PROCEED TO SHIPPING" ONLY when shipping form is NOT visible
-        if (!cartShippingVisible) {
+        if (cartShippingVisible) {
+            // Hide "PROCEED TO SHIPPING" when shipping form is visible
+            proceedToShippingBtn.style.display = 'none';
+        } else {
+            // Show "PROCEED TO SHIPPING" when shipping form is NOT visible
             proceedToShippingBtn.style.display = 'block';
             proceedToShippingBtn.textContent = 'PROCEED TO SHIPPING';
-        } else {
-            proceedToShippingBtn.style.display = 'none';
         }
     }
     
     if (checkoutBtn) {
-        // Show "PROCEED TO CHECKOUT" ONLY when shipping form IS visible
         if (cartShippingVisible) {
+            // Show "PROCEED TO CHECKOUT" ONLY when shipping form IS visible
             checkoutBtn.style.display = 'block';
             checkoutBtn.textContent = 'PROCEED TO CHECKOUT';
             
@@ -1132,7 +1141,7 @@ async function updateCartDisplay() {
                 checkoutBtn.style.pointerEvents = 'none';
             }
         } else {
-            // Hide checkout button when shipping form is not visible
+            // Hide checkout button when shipping form is NOT visible
             checkoutBtn.style.display = 'none';
         }
     }
