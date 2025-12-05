@@ -751,20 +751,30 @@ function openCartSidebar() {
     const checkoutBtn = document.getElementById('checkoutBtn');
     
     if (cartSidebar) {
-        // Reset shipping form state when cart opens
+        // CRITICAL: Reset shipping form state when cart opens - FORCE the correct state
         if (cartShipping) {
             cartShipping.style.display = 'none';
         }
-        if (proceedToShippingBtn && cart.length > 0) {
-            proceedToShippingBtn.style.display = 'block';
-        }
+        
+        // CRITICAL: Force button visibility - ONLY proceed to shipping should show
         if (checkoutBtn) {
             checkoutBtn.style.display = 'none';
+            checkoutBtn.disabled = true;
+        }
+        if (proceedToShippingBtn) {
+            if (cart.length > 0) {
+                proceedToShippingBtn.style.display = 'block';
+                proceedToShippingBtn.textContent = 'PROCEED TO SHIPPING';
+            } else {
+                proceedToShippingBtn.style.display = 'none';
+            }
         }
         
         cartSidebar.classList.add('active');
         if (cartOverlay) cartOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
+        
+        // Update cart display AFTER setting initial state
         updateCartDisplay();
         
         // Ensure calculate shipping button listener is attached
@@ -1121,6 +1131,7 @@ async function updateCartDisplay() {
     const cartShippingVisible = cartShipping && cartShipping.style.display === 'block';
     
     // Button visibility logic: ONLY ONE button visible at a time
+    // CRITICAL: Always hide both first, then show the correct one
     if (proceedToShippingBtn) {
         if (cartShippingVisible) {
             // Hide "PROCEED TO SHIPPING" when shipping form is visible
@@ -1156,8 +1167,9 @@ async function updateCartDisplay() {
                 checkoutBtn.style.pointerEvents = 'none';
             }
         } else {
-            // Hide checkout button when shipping form is NOT visible
+            // CRITICAL: Hide checkout button when shipping form is NOT visible
             checkoutBtn.style.display = 'none';
+            checkoutBtn.disabled = true;
         }
     }
     
@@ -1246,8 +1258,13 @@ function attachCalculateShippingListener() {
                 calculateShippingBtn.disabled = false;
                 calculateShippingBtn.textContent = 'CALCULATE SHIPPING';
                 
-                // Update cart display after resetting button
+                // Update cart display after resetting button - this will enable checkout if all fields are filled
                 await updateCartDisplay();
+                
+                // Also explicitly check form completion to enable checkout button
+                if (typeof window.checkFormCompletion === 'function') {
+                    window.checkFormCompletion();
+                }
             } catch (error) {
                 console.error('[Calculate Shipping Button] Error:', error);
                 showNotification('Error calculating shipping. Please try again.', 'error');
