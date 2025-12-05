@@ -746,7 +746,22 @@ if (cartIcon) {
 function openCartSidebar() {
     const cartSidebar = document.getElementById('cartSidebar');
     const cartOverlay = document.getElementById('cartOverlay');
+    const cartShipping = document.getElementById('cartShipping');
+    const proceedToShippingBtn = document.getElementById('proceedToShippingBtn');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    
     if (cartSidebar) {
+        // Reset shipping form state when cart opens
+        if (cartShipping) {
+            cartShipping.style.display = 'none';
+        }
+        if (proceedToShippingBtn && cart.length > 0) {
+            proceedToShippingBtn.style.display = 'block';
+        }
+        if (checkoutBtn) {
+            checkoutBtn.style.display = 'none';
+        }
+        
         cartSidebar.classList.add('active');
         if (cartOverlay) cartOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
