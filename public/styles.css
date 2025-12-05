@@ -834,13 +834,14 @@ body {
     background: var(--text-primary);
     color: var(--bg-dark);
     border: none;
-    padding: 14px;
-    font-size: 12px;
+    padding: 12px;
+    font-size: 11px;
     letter-spacing: 2px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
     text-transform: uppercase;
+    margin-top: 15px;
 }
 
 .cart-shipping .cart-checkout:hover:not(:disabled) {
@@ -854,21 +855,21 @@ body {
 
 /* Shipping Form */
 .cart-shipping {
-    padding: 20px 30px;
+    padding: 15px 25px;
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
     position: relative; /* For autocomplete positioning */
     overflow: visible; /* Allow autocomplete dropdown to show */
     z-index: 1; /* Lower than pac-container */
-    max-height: calc(100vh - 200px);
+    max-height: calc(100vh - 250px);
     overflow-y: auto;
 }
 
 .cart-shipping h3 {
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 2px;
     text-transform: uppercase;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     color: var(--text-primary);
     font-weight: 500;
 }
@@ -876,16 +877,16 @@ body {
 .cart-shipping form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
 .cart-shipping input,
 .cart-shipping select {
     background: transparent;
     border: 1px solid var(--border);
-    padding: 10px;
+    padding: 8px 10px;
     color: var(--text-primary);
-    font-size: 14px;
+    font-size: 13px;
     font-family: 'Inter', sans-serif;
     transition: border-color 0.3s ease;
     width: 100%;
@@ -1028,15 +1029,15 @@ gmp-place-autocomplete::part(input)::placeholder {
 .shipping-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 10px;
 }
 
 .cart-shipping-btn {
     background: transparent;
     border: 1px solid var(--text-primary);
     color: var(--text-primary);
-    padding: 10px;
-    font-size: 12px;
+    padding: 8px 10px;
+    font-size: 11px;
     letter-spacing: 2px;
     text-transform: uppercase;
     font-weight: 500;
