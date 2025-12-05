@@ -1061,6 +1061,12 @@ async function updateCartDisplay() {
     
     if (!cartItems) return;
     
+    // CRITICAL: Always hide checkout button first, then show it only if shipping form is visible
+    if (checkoutBtn) {
+        checkoutBtn.style.display = 'none';
+        checkoutBtn.disabled = true;
+    }
+    
     if (cart.length === 0) {
         cartItems.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
         if (cartTotal) {
