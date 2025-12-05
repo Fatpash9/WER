@@ -1389,6 +1389,7 @@ window.checkFormCompletion = function() {
             const cartShipping = document.getElementById('cartShipping'); // This is the container div
             const cartShippingVisible = cartShipping && cartShipping.style.display === 'block';
             
+            // CRITICAL: Always hide first, then show only if shipping form is visible
             if (cartShippingVisible) {
                 checkoutBtn.style.display = 'block';
                 checkoutBtn.textContent = 'PROCEED TO CHECKOUT';
@@ -1406,6 +1407,7 @@ window.checkFormCompletion = function() {
             } else {
                 // Hide checkout button when shipping form is not visible
                 checkoutBtn.style.display = 'none';
+                checkoutBtn.disabled = true;
             }
         } else {
             console.error('[checkFormCompletion] ✗ Checkout button element not found!');
