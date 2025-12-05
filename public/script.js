@@ -31,6 +31,10 @@ window.initGoogle = function initGoogle(force = false) {
 const API_BASE = (window.location.protocol === 'https:' || window.location.protocol === 'http:') 
     ? window.location.origin + '/api' 
     : 'https://' + window.location.hostname + '/api';
+
+// Debug: Log API_BASE to verify it's correct
+console.log('[API] API_BASE set to:', API_BASE);
+console.log('[API] Current origin:', window.location.origin);
 // IMPORTANT: Replace with your Stripe PUBLISHABLE key (starts with pk_live_ or pk_test_)
 // Get it from: https://dashboard.stripe.com/apikeys
 // The secret key is configured on the server side
