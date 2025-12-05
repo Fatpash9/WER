@@ -1307,6 +1307,15 @@ shippingInputs.forEach(id => {
                 if (address1 && city && state && zip && country) {
                     await calculateShipping(true);
                     await updateCartDisplay();
+                    // Explicitly check form completion to enable checkout
+                    if (typeof window.checkFormCompletion === 'function') {
+                        window.checkFormCompletion();
+                    }
+                } else {
+                    // Even if not all fields filled, check completion to update button state
+                    if (typeof window.checkFormCompletion === 'function') {
+                        window.checkFormCompletion();
+                    }
                 }
             }, 1500);
         });
@@ -1324,6 +1333,15 @@ shippingInputs.forEach(id => {
                 if (address1 && city && state && zip && country) {
                     await calculateShipping(true);
                     await updateCartDisplay();
+                    // Explicitly check form completion to enable checkout
+                    if (typeof window.checkFormCompletion === 'function') {
+                        window.checkFormCompletion();
+                    }
+                } else {
+                    // Even if not all fields filled, check completion to update button state
+                    if (typeof window.checkFormCompletion === 'function') {
+                        window.checkFormCompletion();
+                    }
                 }
             }, 500);
         });
