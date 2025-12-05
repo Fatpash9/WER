@@ -759,7 +759,7 @@ function openCartSidebar() {
         // CRITICAL: Force button visibility - ONLY proceed to shipping should show in footer
         // Checkout button is now inside shipping section, so hide it when shipping form is hidden
         if (checkoutBtn) {
-            checkoutBtn.style.display = 'none';
+            checkoutBtn.style.setProperty('display', 'none', 'important'); // Force hide with important
             checkoutBtn.disabled = true;
         }
         if (proceedToShippingBtn) {
@@ -1063,7 +1063,7 @@ async function updateCartDisplay() {
     
     // CRITICAL: Always hide checkout button first, then show it only if shipping form is visible
     if (checkoutBtn) {
-        checkoutBtn.style.display = 'none';
+        checkoutBtn.style.setProperty('display', 'none', 'important'); // Force hide with important
         checkoutBtn.disabled = true;
     }
     
@@ -1074,7 +1074,7 @@ async function updateCartDisplay() {
         }
         if (checkoutBtn) {
             checkoutBtn.disabled = true;
-            checkoutBtn.style.display = 'none';
+            checkoutBtn.style.setProperty('display', 'none', 'important'); // Force hide with important
         }
         if (proceedToShippingBtn) {
             proceedToShippingBtn.style.display = 'none';
@@ -1154,7 +1154,7 @@ async function updateCartDisplay() {
         // Checkout button is now INSIDE the shipping section, so only show when shipping form is visible
         if (cartShippingVisible) {
             // Show "PROCEED TO CHECKOUT" ONLY when shipping form IS visible
-            checkoutBtn.style.display = 'block';
+            checkoutBtn.style.setProperty('display', 'block', 'important'); // Use setProperty with important
             checkoutBtn.textContent = 'PROCEED TO CHECKOUT';
             
             // Allow proceeding when all address fields are filled and we have a shipping quote
@@ -1175,8 +1175,8 @@ async function updateCartDisplay() {
                 checkoutBtn.style.pointerEvents = 'none';
             }
         } else {
-            // Hide checkout button when shipping form is NOT visible
-            checkoutBtn.style.display = 'none';
+            // Hide checkout button when shipping form is NOT visible - FORCE HIDE
+            checkoutBtn.style.setProperty('display', 'none', 'important');
             checkoutBtn.disabled = true;
         }
     }
@@ -1391,7 +1391,7 @@ window.checkFormCompletion = function() {
             
             // CRITICAL: Always hide first, then show only if shipping form is visible
             if (cartShippingVisible) {
-                checkoutBtn.style.display = 'block';
+                checkoutBtn.style.setProperty('display', 'block', 'important'); // Use setProperty with important
                 checkoutBtn.textContent = 'PROCEED TO CHECKOUT';
                 
                 if (allFieldsFilled && currentShippingCost > 0) {
@@ -1405,8 +1405,8 @@ window.checkFormCompletion = function() {
                     checkoutBtn.style.pointerEvents = 'none';
                 }
             } else {
-                // Hide checkout button when shipping form is not visible
-                checkoutBtn.style.display = 'none';
+                // Hide checkout button when shipping form is not visible - FORCE HIDE
+                checkoutBtn.style.setProperty('display', 'none', 'important');
                 checkoutBtn.disabled = true;
             }
         } else {

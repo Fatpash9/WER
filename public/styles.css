@@ -829,7 +829,7 @@ body {
     cursor: not-allowed;
 }
 
-/* Checkout button inside shipping section */
+/* Checkout button inside shipping section - HIDDEN BY DEFAULT */
 .cart-shipping .cart-checkout {
     background: var(--text-primary);
     color: var(--bg-dark);
@@ -842,6 +842,12 @@ body {
     transition: all 0.3s ease;
     text-transform: uppercase;
     margin-top: 15px;
+    display: none !important; /* CRITICAL: Force hidden by default - only show via JavaScript */
+}
+
+/* Only show when explicitly set to block via inline style */
+.cart-shipping .cart-checkout[style*="display: block"] {
+    display: block !important;
 }
 
 .cart-shipping .cart-checkout:hover:not(:disabled) {
