@@ -1082,6 +1082,7 @@ async function updateCartDisplay() {
     
     // Show proceed to shipping button if no address yet or shipping not calculated
     const proceedToShippingBtn = document.getElementById('proceedToShippingBtn');
+    const cartShipping = document.getElementById('cartShipping'); // This is the container div
     
     // If shipping form is visible, hide cart items
     if (cartShipping && cartShipping.style.display === 'block') {
@@ -1094,9 +1095,11 @@ async function updateCartDisplay() {
         }
     }
     
+    // Determine if shipping form is visible
+    const cartShippingVisible = cartShipping && cartShipping.style.display === 'block';
+    
     if (proceedToShippingBtn) {
-        // Show this button whenever the shipping form has not been shown yet
-        const cartShippingVisible = cartShipping && cartShipping.style.display === 'block';
+        // Show "PROCEED TO SHIPPING" ONLY when shipping form is NOT visible
         if (!cartShippingVisible) {
             proceedToShippingBtn.style.display = 'block';
             proceedToShippingBtn.textContent = 'PROCEED TO SHIPPING';
@@ -1106,26 +1109,31 @@ async function updateCartDisplay() {
     }
     
     if (checkoutBtn) {
-        // Allow proceeding when all address fields are filled and we have a shipping quote
-        const address1 = getShippingAddress1Value();
-        const city = document.getElementById('city')?.value;
-        const state = document.getElementById('province')?.value;
-        const zip = document.getElementById('postal')?.value;
-        const country = document.getElementById('shippingCountry')?.value;
-        const allFieldsFilled = !!(address1 && city && state && zip && country);
-
-        // Always show the button, just enable/disable it
-        checkoutBtn.style.display = 'block';
-        checkoutBtn.textContent = 'PROCEED TO CHECKOUT';
-        
-        if (allFieldsFilled && shippingCost > 0) {
-            checkoutBtn.disabled = false;
-            checkoutBtn.style.opacity = '1';
-            checkoutBtn.style.pointerEvents = 'auto';
+        // Show "PROCEED TO CHECKOUT" ONLY when shipping form IS visible
+        if (cartShippingVisible) {
+            checkoutBtn.style.display = 'block';
+            checkoutBtn.textContent = 'PROCEED TO CHECKOUT';
+            
+            // Allow proceeding when all address fields are filled and we have a shipping quote
+            const address1 = getShippingAddress1Value();
+            const city = document.getElementById('city')?.value;
+            const state = document.getElementById('province')?.value;
+            const zip = document.getElementById('postal')?.value;
+            const country = document.getElementById('shippingCountry')?.value;
+            const allFieldsFilled = !!(address1 && city && state && zip && country);
+            
+            if (allFieldsFilled && shippingCost > 0) {
+                checkoutBtn.disabled = false;
+                checkoutBtn.style.opacity = '1';
+                checkoutBtn.style.pointerEvents = 'auto';
+            } else {
+                checkoutBtn.disabled = true;
+                checkoutBtn.style.opacity = '0.5';
+                checkoutBtn.style.pointerEvents = 'none';
+            }
         } else {
-            checkoutBtn.disabled = true;
-            checkoutBtn.style.opacity = '0.5';
-            checkoutBtn.style.pointerEvents = 'none';
+            // Hide checkout button when shipping form is not visible
+            checkoutBtn.style.display = 'none';
         }
     }
     
@@ -1310,13 +1318,26 @@ window.checkFormCompletion = function() {
         console.log('[checkFormCompletion] Checkout button element:', checkoutBtn);
         
         if (checkoutBtn) {
-            if (allFieldsFilled && currentShippingCost > 0) {
-                checkoutBtn.disabled = false;
+            // Only show checkout button if shipping form is visible
+            const cartShipping = document.getElementById('cartShipping'); // This is the container div
+            const cartShippingVisible = cartShipping && cartShipping.style.display === 'block';
+            
+            if (cartShippingVisible) {
                 checkoutBtn.style.display = 'block';
                 checkoutBtn.textContent = 'PROCEED TO CHECKOUT';
-                console.log('[checkFormCompletion] ✓✓✓ Checkout button ENABLED ✓✓✓');
+                
+                if (allFieldsFilled && currentShippingCost > 0) {
+                    checkoutBtn.disabled = false;
+                    checkoutBtn.style.opacity = '1';
+                    checkoutBtn.style.pointerEvents = 'auto';
+                    console.log('[checkFormCompletion] ✓✓✓ Checkout button ENABLED ✓✓✓');
+                } else {
+                    checkoutBtn.disabled = true;
+                    checkoutBtn.style.opacity = '0.5';
+                    checkoutBtn.style.pointerEvents = 'none';
+                }
             } else {
-                checkoutBtn.disabled = true;
+                // Hide checkout button when shipping form is not visible
                 checkoutBtn.style.display = 'none';
             }
         } else {
@@ -2599,7 +2620,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     cartItems.style.display = 'none';
                 }
                 cartShipping.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                this.style.display = 'none';
+                
+                // Update cart display to show checkout button and hide proceed to shipping
+                updateCartDisplay();
                 
                 // Re-initialize autocomplete when form becomes visible
                 // Wait a bit longer to ensure the form is fully visible and rendered
