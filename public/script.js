@@ -27,7 +27,10 @@ window.initGoogle = function initGoogle(force = false) {
 
 // Configuration
 // Use relative path for API - works in both localhost and production
-const API_BASE = window.location.origin + '/api';
+// Force use of current origin (not cached localhost)
+const API_BASE = (window.location.protocol === 'https:' || window.location.protocol === 'http:') 
+    ? window.location.origin + '/api' 
+    : 'https://' + window.location.hostname + '/api';
 // IMPORTANT: Replace with your Stripe PUBLISHABLE key (starts with pk_live_ or pk_test_)
 // Get it from: https://dashboard.stripe.com/apikeys
 // The secret key is configured on the server side

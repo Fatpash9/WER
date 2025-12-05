@@ -10,6 +10,26 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Define initGoogle BEFORE Google Maps script loads -->
+    <script>
+        // Define initGoogle globally so Google Maps can call it
+        window.initGoogle = function initGoogle(force) {
+            console.log('[initGoogle] Called by Google Maps, delegating to full implementation...');
+            // The full implementation will be available when script.js loads
+            if (typeof window._initGoogleFull === 'function') {
+                return window._initGoogleFull(force);
+            }
+            // If script.js hasn't loaded yet, wait for it
+            const checkInterval = setInterval(() => {
+                if (typeof window._initGoogleFull === 'function') {
+                    clearInterval(checkInterval);
+                    window._initGoogleFull(force);
+                }
+            }, 50);
+            // Stop checking after 5 seconds
+            setTimeout(() => clearInterval(checkInterval), 5000);
+        };
+    </script>
     <script
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXUl1ALMadTgG50eu0cM-A7wMbaEj2Uc0&libraries=places&loading=async&callback=initGoogle"
       async
