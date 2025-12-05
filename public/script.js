@@ -756,7 +756,8 @@ function openCartSidebar() {
             cartShipping.style.display = 'none';
         }
         
-        // CRITICAL: Force button visibility - ONLY proceed to shipping should show
+        // CRITICAL: Force button visibility - ONLY proceed to shipping should show in footer
+        // Checkout button is now inside shipping section, so hide it when shipping form is hidden
         if (checkoutBtn) {
             checkoutBtn.style.display = 'none';
             checkoutBtn.disabled = true;
