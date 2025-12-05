@@ -1144,6 +1144,7 @@ async function updateCartDisplay() {
     }
     
     if (checkoutBtn) {
+        // Checkout button is now INSIDE the shipping section, so only show when shipping form is visible
         if (cartShippingVisible) {
             // Show "PROCEED TO CHECKOUT" ONLY when shipping form IS visible
             checkoutBtn.style.display = 'block';
@@ -1167,7 +1168,7 @@ async function updateCartDisplay() {
                 checkoutBtn.style.pointerEvents = 'none';
             }
         } else {
-            // CRITICAL: Hide checkout button when shipping form is NOT visible
+            // Hide checkout button when shipping form is NOT visible
             checkoutBtn.style.display = 'none';
             checkoutBtn.disabled = true;
         }
@@ -1377,7 +1378,7 @@ window.checkFormCompletion = function() {
         console.log('[checkFormCompletion] Checkout button element:', checkoutBtn);
         
         if (checkoutBtn) {
-            // Only show checkout button if shipping form is visible
+            // Checkout button is now INSIDE the shipping section
             const cartShipping = document.getElementById('cartShipping'); // This is the container div
             const cartShippingVisible = cartShipping && cartShipping.style.display === 'block';
             

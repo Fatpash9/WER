@@ -829,21 +829,46 @@ body {
     cursor: not-allowed;
 }
 
+/* Checkout button inside shipping section */
+.cart-shipping .cart-checkout {
+    background: var(--text-primary);
+    color: var(--bg-dark);
+    border: none;
+    padding: 14px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.cart-shipping .cart-checkout:hover:not(:disabled) {
+    background: var(--text-secondary);
+}
+
+.cart-shipping .cart-checkout:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /* Shipping Form */
 .cart-shipping {
-    padding: 30px;
+    padding: 20px 30px;
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
     position: relative; /* For autocomplete positioning */
     overflow: visible; /* Allow autocomplete dropdown to show */
     z-index: 1; /* Lower than pac-container */
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
 }
 
 .cart-shipping h3 {
     font-size: 12px;
     letter-spacing: 2px;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     color: var(--text-primary);
     font-weight: 500;
 }
@@ -851,14 +876,14 @@ body {
 .cart-shipping form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 
 .cart-shipping input,
 .cart-shipping select {
     background: transparent;
     border: 1px solid var(--border);
-    padding: 12px;
+    padding: 10px;
     color: var(--text-primary);
     font-size: 14px;
     font-family: 'Inter', sans-serif;
@@ -1003,14 +1028,14 @@ gmp-place-autocomplete::part(input)::placeholder {
 .shipping-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 12px;
 }
 
 .cart-shipping-btn {
     background: transparent;
     border: 1px solid var(--text-primary);
     color: var(--text-primary);
-    padding: 12px;
+    padding: 10px;
     font-size: 12px;
     letter-spacing: 2px;
     text-transform: uppercase;
