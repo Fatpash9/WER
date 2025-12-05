@@ -1,29 +1,6 @@
-// Define initGoogle FIRST so it's available when Google Maps script loads
-// This must be defined before the Google Maps script tries to call it
-window.initGoogle = function initGoogle(force = false) {
-    // This will be fully defined later in the file
-    // For now, just provide a stub that will be replaced
-    console.log('[initGoogle] Function called, checking for full implementation...');
-    if (typeof window._initGoogleFull === 'function') {
-        return window._initGoogleFull(force);
-    }
-    // Retry after a short delay
-    setTimeout(() => {
-        if (typeof window._initGoogleFull === 'function') {
-            window._initGoogleFull(force);
-        } else {
-            console.warn('[initGoogle] Full implementation not yet available, will retry when DOM is ready');
-            // Try again when DOM is ready
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => {
-                    if (typeof window._initGoogleFull === 'function') {
-                        window._initGoogleFull(force);
-                    }
-                });
-            }
-        }
-    }, 100);
-};
+// NOTE: initGoogle is defined in index.html BEFORE this script loads
+// This ensures it's available when Google Maps API calls it
+// We just need to make sure window._initGoogleFull is available when script.js loads
 
 // Configuration
 // Use relative path for API - works in both localhost and production
