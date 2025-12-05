@@ -4,14 +4,30 @@
 
 // Configuration
 // Use relative path for API - works in both localhost and production
-// Force use of current origin (not cached localhost)
-const API_BASE = (window.location.protocol === 'https:' || window.location.protocol === 'http:') 
-    ? window.location.origin + '/api' 
-    : 'https://' + window.location.hostname + '/api';
+// IMPORTANT: Always use current window.location.origin to avoid cached localhost
+(function() {
+    'use strict';
+    const origin = window.location.origin;
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    
+    // Force use of current origin - never use localhost in production
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        // Only allow localhost if we're actually on localhost
+        window.API_BASE = origin + '/api';
+    } else {
+        // Production: always use current origin
+        window.API_BASE = origin + '/api';
+    }
+    
+    console.log('[API] Configuration:');
+    console.log('[API]   Protocol:', protocol);
+    console.log('[API]   Hostname:', hostname);
+    console.log('[API]   Origin:', origin);
+    console.log('[API]   API_BASE:', window.API_BASE);
+})();
 
-// Debug: Log API_BASE to verify it's correct
-console.log('[API] API_BASE set to:', API_BASE);
-console.log('[API] Current origin:', window.location.origin);
+const API_BASE = window.API_BASE;
 // IMPORTANT: Replace with your Stripe PUBLISHABLE key (starts with pk_live_ or pk_test_)
 // Get it from: https://dashboard.stripe.com/apikeys
 // The secret key is configured on the server side
@@ -85,11 +101,17 @@ document.addEventListener('DOMContentLoaded', function() {
 // Initialize application
 async function initApp() {
     try {
-        console.log('Initializing app...');
-        console.log('API_BASE:', API_BASE);
+        console.log('[initApp] Initializing app...');
+        console.log('[initApp] API_BASE:', API_BASE);
+        console.log('[initApp] Fetching from:', `${API_BASE}/shops`);
         
         // Get shop ID first
-        const shopsResponse = await fetch(`${API_BASE}/shops`);
+        const shopsResponse = await fetch(`${API_BASE}/shops`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         
         if (!shopsResponse.ok) {
             console.error('API request failed:', shopsResponse.status, shopsResponse.statusText);
