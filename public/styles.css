@@ -825,11 +825,11 @@ body {
 }
 
 .cart-checkout:disabled {
-    opacity: 0.5;
+    opacity: 0;
     cursor: not-allowed;
 }
 
-/* Checkout button inside shipping section - HIDDEN BY DEFAULT */
+/* Checkout button inside shipping section - COMPLETELY HIDDEN BY DEFAULT */
 .cart-shipping .cart-checkout {
     background: var(--text-primary);
     color: var(--bg-dark);
@@ -843,11 +843,23 @@ body {
     text-transform: uppercase;
     margin-top: 15px;
     display: none !important; /* CRITICAL: Force hidden by default - only show via JavaScript */
+    visibility: hidden !important; /* Double ensure it's completely invisible */
+    opacity: 0 !important; /* Triple ensure it's not visible */
+    height: 0 !important; /* Make it take no space */
+    padding: 0 !important; /* Remove padding when hidden */
+    margin: 0 !important; /* Remove margin when hidden */
+    overflow: hidden !important; /* Hide any content */
 }
 
 /* Only show when explicitly set to block via inline style */
 .cart-shipping .cart-checkout[style*="display: block"] {
     display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    padding: 12px !important;
+    margin-top: 15px !important;
+    overflow: visible !important;
 }
 
 .cart-shipping .cart-checkout:hover:not(:disabled) {

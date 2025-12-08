@@ -759,7 +759,13 @@ function openCartSidebar() {
         // CRITICAL: Force button visibility - ONLY proceed to shipping should show in footer
         // Checkout button is now inside shipping section, so hide it when shipping form is hidden
         if (checkoutBtn) {
-            checkoutBtn.style.setProperty('display', 'none', 'important'); // Force hide with important
+            checkoutBtn.style.setProperty('display', 'none', 'important');
+            checkoutBtn.style.setProperty('visibility', 'hidden', 'important');
+            checkoutBtn.style.setProperty('opacity', '0', 'important');
+            checkoutBtn.style.setProperty('height', '0', 'important');
+            checkoutBtn.style.setProperty('padding', '0', 'important');
+            checkoutBtn.style.setProperty('margin', '0', 'important');
+            checkoutBtn.style.setProperty('overflow', 'hidden', 'important');
             checkoutBtn.disabled = true;
         }
         if (proceedToShippingBtn) {
@@ -1063,7 +1069,13 @@ async function updateCartDisplay() {
     
     // CRITICAL: Always hide checkout button first, then show it only if shipping form is visible
     if (checkoutBtn) {
-        checkoutBtn.style.setProperty('display', 'none', 'important'); // Force hide with important
+        checkoutBtn.style.setProperty('display', 'none', 'important');
+        checkoutBtn.style.setProperty('visibility', 'hidden', 'important');
+        checkoutBtn.style.setProperty('opacity', '0', 'important');
+        checkoutBtn.style.setProperty('height', '0', 'important');
+        checkoutBtn.style.setProperty('padding', '0', 'important');
+        checkoutBtn.style.setProperty('margin', '0', 'important');
+        checkoutBtn.style.setProperty('overflow', 'hidden', 'important');
         checkoutBtn.disabled = true;
     }
     
@@ -1074,7 +1086,13 @@ async function updateCartDisplay() {
         }
         if (checkoutBtn) {
             checkoutBtn.disabled = true;
-            checkoutBtn.style.setProperty('display', 'none', 'important'); // Force hide with important
+            checkoutBtn.style.setProperty('display', 'none', 'important');
+            checkoutBtn.style.setProperty('visibility', 'hidden', 'important');
+            checkoutBtn.style.setProperty('opacity', '0', 'important');
+            checkoutBtn.style.setProperty('height', '0', 'important');
+            checkoutBtn.style.setProperty('padding', '0', 'important');
+            checkoutBtn.style.setProperty('margin', '0', 'important');
+            checkoutBtn.style.setProperty('overflow', 'hidden', 'important');
         }
         if (proceedToShippingBtn) {
             proceedToShippingBtn.style.display = 'none';
@@ -1154,7 +1172,13 @@ async function updateCartDisplay() {
         // Checkout button is now INSIDE the shipping section, so only show when shipping form is visible
         if (cartShippingVisible) {
             // Show "PROCEED TO CHECKOUT" ONLY when shipping form IS visible
-            checkoutBtn.style.setProperty('display', 'block', 'important'); // Use setProperty with important
+            checkoutBtn.style.setProperty('display', 'block', 'important');
+            checkoutBtn.style.setProperty('visibility', 'visible', 'important');
+            checkoutBtn.style.setProperty('opacity', '1', 'important');
+            checkoutBtn.style.setProperty('height', 'auto', 'important');
+            checkoutBtn.style.setProperty('padding', '12px', 'important');
+            checkoutBtn.style.setProperty('margin-top', '15px', 'important');
+            checkoutBtn.style.setProperty('overflow', 'visible', 'important');
             checkoutBtn.textContent = 'PROCEED TO CHECKOUT';
             
             // Allow proceeding when all address fields are filled and we have a shipping quote
@@ -1167,16 +1191,22 @@ async function updateCartDisplay() {
             
             if (allFieldsFilled && shippingCost > 0) {
                 checkoutBtn.disabled = false;
-                checkoutBtn.style.opacity = '1';
-                checkoutBtn.style.pointerEvents = 'auto';
+                checkoutBtn.style.setProperty('opacity', '1', 'important');
+                checkoutBtn.style.setProperty('pointer-events', 'auto', 'important');
             } else {
                 checkoutBtn.disabled = true;
-                checkoutBtn.style.opacity = '0.5';
-                checkoutBtn.style.pointerEvents = 'none';
+                checkoutBtn.style.setProperty('opacity', '0.5', 'important');
+                checkoutBtn.style.setProperty('pointer-events', 'none', 'important');
             }
         } else {
-            // Hide checkout button when shipping form is NOT visible - FORCE HIDE
+            // Hide checkout button when shipping form is NOT visible - COMPLETELY HIDE
             checkoutBtn.style.setProperty('display', 'none', 'important');
+            checkoutBtn.style.setProperty('visibility', 'hidden', 'important');
+            checkoutBtn.style.setProperty('opacity', '0', 'important');
+            checkoutBtn.style.setProperty('height', '0', 'important');
+            checkoutBtn.style.setProperty('padding', '0', 'important');
+            checkoutBtn.style.setProperty('margin', '0', 'important');
+            checkoutBtn.style.setProperty('overflow', 'hidden', 'important');
             checkoutBtn.disabled = true;
         }
     }
@@ -1391,22 +1421,34 @@ window.checkFormCompletion = function() {
             
             // CRITICAL: Always hide first, then show only if shipping form is visible
             if (cartShippingVisible) {
-                checkoutBtn.style.setProperty('display', 'block', 'important'); // Use setProperty with important
+                checkoutBtn.style.setProperty('display', 'block', 'important');
+                checkoutBtn.style.setProperty('visibility', 'visible', 'important');
+                checkoutBtn.style.setProperty('opacity', '1', 'important');
+                checkoutBtn.style.setProperty('height', 'auto', 'important');
+                checkoutBtn.style.setProperty('padding', '12px', 'important');
+                checkoutBtn.style.setProperty('margin-top', '15px', 'important');
+                checkoutBtn.style.setProperty('overflow', 'visible', 'important');
                 checkoutBtn.textContent = 'PROCEED TO CHECKOUT';
                 
                 if (allFieldsFilled && currentShippingCost > 0) {
                     checkoutBtn.disabled = false;
-                    checkoutBtn.style.opacity = '1';
-                    checkoutBtn.style.pointerEvents = 'auto';
+                    checkoutBtn.style.setProperty('opacity', '1', 'important');
+                    checkoutBtn.style.setProperty('pointer-events', 'auto', 'important');
                     console.log('[checkFormCompletion] ✓✓✓ Checkout button ENABLED ✓✓✓');
                 } else {
                     checkoutBtn.disabled = true;
-                    checkoutBtn.style.opacity = '0.5';
-                    checkoutBtn.style.pointerEvents = 'none';
+                    checkoutBtn.style.setProperty('opacity', '0.5', 'important');
+                    checkoutBtn.style.setProperty('pointer-events', 'none', 'important');
                 }
             } else {
-                // Hide checkout button when shipping form is not visible - FORCE HIDE
+                // Hide checkout button when shipping form is not visible - COMPLETELY HIDE
                 checkoutBtn.style.setProperty('display', 'none', 'important');
+                checkoutBtn.style.setProperty('visibility', 'hidden', 'important');
+                checkoutBtn.style.setProperty('opacity', '0', 'important');
+                checkoutBtn.style.setProperty('height', '0', 'important');
+                checkoutBtn.style.setProperty('padding', '0', 'important');
+                checkoutBtn.style.setProperty('margin', '0', 'important');
+                checkoutBtn.style.setProperty('overflow', 'hidden', 'important');
                 checkoutBtn.disabled = true;
             }
         } else {
