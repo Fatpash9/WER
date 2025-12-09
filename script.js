@@ -164,18 +164,39 @@ async function initApp() {
         });
         
         if (!shopsResponse.ok) {
-            console.error('API request failed:', shopsResponse.status, shopsResponse.statusText);
-            throw new Error(`Server returned ${shopsResponse.status}: ${shopsResponse.statusText}`);
+            const errorText = await shopsResponse.text();
+            let errorData;
+            try {
+                errorData = JSON.parse(errorText);
+            } catch {
+                errorData = { message: errorText };
+            }
+            
+            console.error('[initApp] API request failed:', {
+                status: shopsResponse.status,
+                statusText: shopsResponse.statusText,
+                url: shopsResponse.url,
+                error: errorData
+            });
+            
+            // Check if it's a configuration error
+            if (errorData.message && errorData.message.includes('PRINTFUL_TOKEN')) {
+                showError('Server Configuration Error: Printful API token is not set in Vercel. Please configure the PRINTFUL_TOKEN environment variable.');
+                renderErrorState('CONFIGURATION ERROR');
+                return;
+            }
+            
+            throw new Error(`Server returned ${shopsResponse.status}: ${errorData.message || shopsResponse.statusText}`);
         }
         
         const shopsData = await shopsResponse.json();
-        console.log('Shops data received:', shopsData);
-        
-        console.log('Shops response:', shopsData);
+        console.log('[initApp] Shops data received:', shopsData);
         
         // Printiful uses 'result' instead of 'data'
         if (shopsData.error || (shopsData.code && shopsData.code !== 200)) {
-            showError(`Printiful API Error: ${shopsData.error || 'Unknown error'}. Please check your API token.`);
+            const errorMsg = shopsData.error?.message || shopsData.error || shopsData.message || 'Unknown error';
+            console.error('[initApp] Printful API Error:', errorMsg);
+            showError(`Printful API Error: ${errorMsg}. Please check your API token in Vercel environment variables.`);
             renderErrorState('AUTHENTICATION ERROR');
             return;
         }
@@ -445,7 +466,16 @@ async function openModal(productId) {
         // Fetch full product details to get sync_variants array
         console.log('Fetching full product details for:', product.id);
         try {
-            const response = await fetch(`${getApiBase()}/shops/${shopId}/products/${product.id}`);
+            const productUrl = `${getApiBase()}/shops/${shopId}/products/${product.id}`;
+            console.log('[loadProducts] Fetching product details from:', productUrl);
+            
+            const response = await fetch(productUrl);
+            
+            if (!response.ok) {
+                console.error('[loadProducts] Failed to fetch product:', product.id, response.status, response.statusText);
+                continue; // Skip this product if it fails
+            }
+            
             const productData = await response.json();
             
             if (productData.result && productData.code === 200) {

@@ -28,9 +28,27 @@ This ensures the token is used securely in production and the API works on all d
 
 ### Other Required Environment Variables:
 
-Make sure these are also set in Vercel:
-- `STRIPE_SECRET_KEY` - Your Stripe secret key (starts with `sk_live_` or `sk_test_`)
-- `STRIPE_WEBHOOK_SECRET` - Your Stripe webhook secret (for order fulfillment)
+**CRITICAL - Set these in Vercel:**
+
+1. **`STRIPE_SECRET_KEY`** (Required for payments)
+   - Your Stripe secret key (starts with `sk_live_` or `sk_test_`)
+   - Current fallback in code: `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`
+   - **Note**: The fallback key starts with `rk_live_` which is a restricted key. You need a full secret key starting with `sk_live_` for production.
+   - Get it from: https://dashboard.stripe.com/apikeys
+
+2. **`STRIPE_WEBHOOK_SECRET`** (Required for order fulfillment)
+   - Your Stripe webhook secret (for verifying webhook events)
+   - Get it from: https://dashboard.stripe.com/webhooks
+   - After creating a webhook endpoint, copy the "Signing secret"
+
+### Optional (Already in Code):
+
+- **Google Places API Key**: Already hardcoded in `index.html` (`AIzaSyCXUl1ALMadTgG50eu0cM-A7wMbaEj2Uc0`)
+  - This is a client-side key, so it's fine to be in the HTML
+  - Make sure it's restricted in Google Cloud Console to your domain only
+
+- **Stripe Publishable Key**: Already hardcoded in `script.js` (`pk_live_51SVFspEW8cQp4AXRTjATqHrKgnARWpwsk8U4kG8AbQZqvpFtRlzvcqzY8n5atepd54Vw61fBAvuNl7wNCZ4l7Oox00MjKUbFUn`)
+  - Publishable keys are meant to be public, so this is fine
 
 ### After Setting Environment Variables:
 
