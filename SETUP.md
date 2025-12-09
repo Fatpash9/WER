@@ -47,7 +47,7 @@
 
 Once you've updated the Printify token:
 1. Restart the server
-2. Open http://localhost:3000
+2. Open http://westendritual.com
 3. Check browser console (F12) for any errors
 4. Products should load from your Printify store
 

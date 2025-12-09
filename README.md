@@ -46,7 +46,7 @@ Update the contact form in `index.html` with your Formspree form ID:
 npm run dev
 ```
 
-The server will run on `http://localhost:3000`
+The server will run on `http://westendritual.com`
 
 ### 6. Open the Website
 
