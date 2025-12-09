@@ -229,15 +229,48 @@ async function initApp() {
 // Load products from Printify
 async function loadProducts() {
     try {
-        console.log('Loading products for shop:', shopId);
-        const response = await fetch(`${getApiBase()}/shops/${shopId}/products`);
-        const data = await response.json();
+        console.log('[loadProducts] Loading products for shop:', shopId);
+        const apiBase = getApiBase();
+        const productsUrl = `${apiBase}/shops/${shopId}/products`;
+        console.log('[loadProducts] Fetching from:', productsUrl);
         
-        console.log('Products response:', data);
+        const response = await fetch(productsUrl);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            let errorData;
+            try {
+                errorData = JSON.parse(errorText);
+            } catch {
+                errorData = { message: errorText };
+            }
+            
+            console.error('[loadProducts] API request failed:', {
+                status: response.status,
+                statusText: response.statusText,
+                url: response.url,
+                error: errorData
+            });
+            
+            if (errorData.message && errorData.message.includes('PRINTFUL_TOKEN')) {
+                showError('Server Configuration Error: Printful API token is not set in Vercel. Please configure the PRINTFUL_TOKEN environment variable.');
+                renderErrorState('CONFIGURATION ERROR');
+                return;
+            }
+            
+            showError(`Failed to load products: ${errorData.message || response.statusText}`);
+            renderErrorState('PRODUCTS ERROR');
+            return;
+        }
+        
+        const data = await response.json();
+        console.log('[loadProducts] Products response received:', data);
         
         // Printiful uses 'result' instead of 'data'
         if (data.error || (data.code && data.code !== 200)) {
-            showError(`Error: ${data.error || 'Unknown error'}`);
+            const errorMsg = data.error?.message || data.error || data.message || 'Unknown error';
+            console.error('[loadProducts] Printful API Error:', errorMsg);
+            showError(`Printful API Error: ${errorMsg}. Please check your API token in Vercel.`);
             renderErrorState('PRODUCTS ERROR');
             return;
         }
