@@ -67,6 +67,42 @@ if (STRIPE_PUBLISHABLE_KEY && STRIPE_PUBLISHABLE_KEY !== 'YOUR_STRIPE_PUBLISHABL
     console.warn('Get your publishable key from: https://dashboard.stripe.com/apikeys');
 }
 
+// CRITICAL: Hide checkout button IMMEDIATELY on page load (before DOMContentLoaded)
+(function() {
+    'use strict';
+    // Run immediately, don't wait for DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            if (checkoutBtn) {
+                checkoutBtn.style.setProperty('display', 'none', 'important');
+                checkoutBtn.style.setProperty('visibility', 'hidden', 'important');
+                checkoutBtn.style.setProperty('opacity', '0', 'important');
+                checkoutBtn.style.setProperty('height', '0', 'important');
+                checkoutBtn.style.setProperty('padding', '0', 'important');
+                checkoutBtn.style.setProperty('margin', '0', 'important');
+                checkoutBtn.style.setProperty('overflow', 'hidden', 'important');
+                checkoutBtn.style.setProperty('pointer-events', 'none', 'important');
+                checkoutBtn.disabled = true;
+            }
+        });
+    } else {
+        // DOM already loaded, hide immediately
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        if (checkoutBtn) {
+            checkoutBtn.style.setProperty('display', 'none', 'important');
+            checkoutBtn.style.setProperty('visibility', 'hidden', 'important');
+            checkoutBtn.style.setProperty('opacity', '0', 'important');
+            checkoutBtn.style.setProperty('height', '0', 'important');
+            checkoutBtn.style.setProperty('padding', '0', 'important');
+            checkoutBtn.style.setProperty('margin', '0', 'important');
+            checkoutBtn.style.setProperty('overflow', 'hidden', 'important');
+            checkoutBtn.style.setProperty('pointer-events', 'none', 'important');
+            checkoutBtn.disabled = true;
+        }
+    }
+})();
+
 // Navigation scroll effect
 document.addEventListener('DOMContentLoaded', function() {
     try {

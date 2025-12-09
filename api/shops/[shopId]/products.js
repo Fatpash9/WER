@@ -1,7 +1,11 @@
 const fetch = require('node-fetch');
 
 const PRINTFUL_API_BASE = 'https://api.printful.com';
-const PRINTFUL_TOKEN = process.env.PRINTFUL_TOKEN || 'UvNCDm5MoW5YZDFjdafAEf7s3Qs1aCcPAcIbFPhA';
+const PRINTFUL_TOKEN = process.env.PRINTFUL_TOKEN || '1qQlIDpVdmdqk2t6t0hfZPcXcdlzyMza2iUK38tm';
+
+if (!process.env.PRINTFUL_TOKEN) {
+    console.warn('WARNING: PRINTFUL_TOKEN environment variable is not set! Using fallback token. Set it in Vercel for production.');
+}
 
 module.exports = async (req, res) => {
     // Enable CORS
@@ -14,6 +18,14 @@ module.exports = async (req, res) => {
     }
 
     try {
+        if (!PRINTFUL_TOKEN) {
+            return res.status(500).json({ 
+                error: 'Printful API token not configured. Please set PRINTFUL_TOKEN environment variable in Vercel.',
+                message: 'Server configuration error: PRINTFUL_TOKEN is missing.'
+            });
+        }
+
+        console.log('[API] Fetching products from Printful...');
         const response = await fetch(`${PRINTFUL_API_BASE}/store/products`, {
             headers: {
                 'Authorization': `Bearer ${PRINTFUL_TOKEN}`,

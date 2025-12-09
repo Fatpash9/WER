@@ -2,7 +2,11 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || 'rk_live_51SVF
 const fetch = require('node-fetch');
 
 const PRINTFUL_API_BASE = 'https://api.printful.com';
-const PRINTFUL_TOKEN = process.env.PRINTFUL_TOKEN || 'UvNCDm5MoW5YZDFjdafAEf7s3Qs1aCcPAcIbFPhA';
+const PRINTFUL_TOKEN = process.env.PRINTFUL_TOKEN || '1qQlIDpVdmdqk2t6t0hfZPcXcdlzyMza2iUK38tm';
+
+if (!process.env.PRINTFUL_TOKEN) {
+    console.warn('WARNING: PRINTFUL_TOKEN environment variable is not set! Using fallback token. Set it in Vercel for production.');
+}
 
 async function createPrintfulOrder(stripeSession) {
     try {
@@ -62,6 +66,11 @@ async function createPrintfulOrder(stripeSession) {
             printfulOrder.shipping = shippingMethod.id;
         }
 
+        if (!PRINTFUL_TOKEN) {
+            throw new Error('Printful API token not configured. Please set PRINTFUL_TOKEN environment variable in Vercel.');
+        }
+
+        console.log('[API] Creating Printful order...');
         const response = await fetch(`${PRINTFUL_API_BASE}/orders`, {
             method: 'POST',
             headers: {
