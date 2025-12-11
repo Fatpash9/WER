@@ -29,8 +29,9 @@ Object.defineProperty(window, 'API_BASE', {
     configurable: true
 });
 
-// For backwards compatibility, also set as const
-const API_BASE = getApiBase();
+// CRITICAL: Never use a cached constant - always call getApiBase() at runtime
+// DO NOT create a const API_BASE that could be cached
+// Instead, always call getApiBase() directly when needed
 
 // Log immediately to verify
 console.log('[API] ========================================');
@@ -38,8 +39,15 @@ console.log('[API] API Configuration (calculated at runtime):');
 console.log('[API]   Hostname:', window.location.hostname);
 console.log('[API]   Origin:', window.location.origin);
 console.log('[API]   Protocol:', window.location.protocol);
-console.log('[API]   API_BASE:', API_BASE);
+console.log('[API]   Current API_BASE:', getApiBase());
+console.log('[API]   Is localhost?', window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 console.log('[API] ========================================');
+
+// Override any potential cached values
+if (window.API_BASE_CACHED) {
+    console.warn('[API] WARNING: Found cached API_BASE, clearing it');
+    delete window.API_BASE_CACHED;
+}
 // IMPORTANT: Replace with your Stripe PUBLISHABLE key (starts with pk_live_ or pk_test_)
 // Get it from: https://dashboard.stripe.com/apikeys
 // The secret key is configured on the server side
@@ -122,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Initialize app with better error handling
         initApp().catch(error => {
             console.error('Failed to initialize app:', error);
-            console.error('API_BASE was:', API_BASE);
+            console.error('API_BASE was:', getApiBase());
             
             // Ensure page still renders even if API fails
             const productsGrid = document.getElementById('productsGrid');
@@ -134,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             The backend server may not be running.<br>
                             Please ensure the server is deployed and accessible.<br>
                             <span style="color: #999; font-size: 10px; margin-top: 10px; display: block;">
-                                API Endpoint: ${API_BASE}
+                                API Endpoint: ${getApiBase()}
                             </span>
                         </div>
                     </div>
@@ -150,13 +158,29 @@ document.addEventListener('DOMContentLoaded', function() {
 async function initApp() {
     try {
         console.log('[initApp] Initializing app...');
-        // Recalculate API_BASE at runtime to ensure we never use cached localhost
-        const currentApiBase = getApiBase();
-        console.log('[initApp] API_BASE (recalculated):', currentApiBase);
-        console.log('[initApp] Fetching from:', `${currentApiBase}/shops`);
+        // CRITICAL: Always call getApiBase() directly - never cache the result
+        // This ensures we always use the current origin, never a cached localhost value
+        const apiBase = getApiBase();
+        console.log('[initApp] ========================================');
+        console.log('[initApp] Current location:', window.location.href);
+        console.log('[initApp] Hostname:', window.location.hostname);
+        console.log('[initApp] Origin:', window.location.origin);
+        console.log('[initApp] API Base (calculated now):', apiBase);
+        console.log('[initApp] Fetching from:', `${apiBase}/shops`);
+        console.log('[initApp] ========================================');
+        
+        // Validate we're not using localhost in production
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && apiBase.includes('localhost')) {
+            console.error('[initApp] CRITICAL ERROR: Detected localhost in production API base!');
+            console.error('[initApp] This should never happen. Forcing correction...');
+            const correctedBase = window.location.origin + '/api';
+            console.error('[initApp] Corrected API base:', correctedBase);
+            showError('Configuration error: Please clear your browser cache and reload the page.');
+            return;
+        }
         
         // Get shop ID first
-        const shopsResponse = await fetch(`${currentApiBase}/shops`, {
+        const shopsResponse = await fetch(`${apiBase}/shops`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
