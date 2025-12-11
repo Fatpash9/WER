@@ -18,10 +18,20 @@ module.exports = async (req, res) => {
     }
 
     try {
+        // Extract shopId from query params (Vercel passes dynamic route params as query params)
+        const shopId = req.query.shopId || req.query['[shopId]'] || req.url.split('/')[3];
+        console.log('[API] ShopId from request:', shopId);
+        console.log('[API] Query params:', req.query);
+        console.log('[API] Environment check - PRINTFUL_TOKEN exists:', !!process.env.PRINTFUL_TOKEN);
+        
         if (!PRINTFUL_TOKEN) {
             return res.status(500).json({ 
                 error: 'Printful API token not configured. Please set PRINTFUL_TOKEN environment variable in Vercel.',
-                message: 'Server configuration error: PRINTFUL_TOKEN is missing.'
+                message: 'Server configuration error: PRINTFUL_TOKEN is missing.',
+                debug: {
+                    hasEnvVar: !!process.env.PRINTFUL_TOKEN,
+                    hasFallback: !!'1qQlIDpVdmdqk2t6t0hfZPcXcdlzyMza2iUK38tm'
+                }
             });
         }
 
@@ -34,15 +44,32 @@ module.exports = async (req, res) => {
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            return res.status(response.status).json(errorData);
+            const errorText = await response.text();
+            let errorData;
+            try {
+                errorData = JSON.parse(errorText);
+            } catch {
+                errorData = { message: errorText };
+            }
+            console.error('[API] Printful API error:', errorData);
+            return res.status(response.status).json({
+                ...errorData,
+                debug: {
+                    status: response.status,
+                    statusText: response.statusText
+                }
+            });
         }
 
         const data = await response.json();
+        console.log('[API] Successfully fetched products, count:', data.result?.length || 0);
         res.json(data);
     } catch (error) {
-        console.error('Error fetching products:', error);
-        res.status(500).json({ error: error.message });
+        console.error('[API] Error fetching products:', error);
+        res.status(500).json({ 
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
     }
 };
 

@@ -1,15 +1,38 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "@vercel/node"
     }
-  ],
+  },
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "src": "/api/health",
+      "dest": "/api/health.js"
+    },
+    {
+      "src": "/api/shops",
+      "dest": "/api/shops.js"
+    },
+    {
+      "src": "/api/shops/([^/]+)/products",
+      "dest": "/api/shops/[shopId]/products.js?shopId=$1"
+    },
+    {
+      "src": "/api/shops/([^/]+)/products/([^/]+)",
+      "dest": "/api/shops/[shopId]/products/[productId].js?shopId=$1&productId=$2"
+    },
+    {
+      "src": "/api/calculate-shipping",
+      "dest": "/api/calculate-shipping.js"
+    },
+    {
+      "src": "/api/create-checkout-session",
+      "dest": "/api/create-checkout-session.js"
+    },
+    {
+      "src": "/api/webhook",
+      "dest": "/api/webhook.js"
     },
     {
       "src": "/(.*\\.(js|css|png|jpg|jpeg|svg|ico|gif|webp|woff|woff2|ttf|eot))",
